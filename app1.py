@@ -1,8 +1,10 @@
 from flask import Flask
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template_string
 import pandas as pd
 import joblib
+
+
 
 app = Flask(__name__)
 
@@ -12,6 +14,14 @@ def return_prediction(model, input_df):
     return prediction
 
 model = joblib.load('ovulationpredictor.joblib')
+
+# app = Flask(__name__)
+
+# def return_prediction(model, input_df):
+#     prediction = model.predict(input_df)[0]
+#     return prediction
+
+# model = joblib.load('ovulationpredictor.joblib')
 
 @app.route("/")
 def index():
@@ -99,6 +109,81 @@ def index():
     
     return form_html
 
+@app.route('/predict', methods=["POST"])
+def ovulation_prediction():
+    # Ensure the request is POST
+    if request.method == "POST":
+        # Extract form data
+        input_data = {field: request.form.get(field, type=str) for field in request.form}
+        input_df = pd.DataFrame([input_data])
+
+        # Define numeric fields and convert them
+        numeric_fields = ['LengthofCycle', 'LengthofLutealPhase', 'FirstDayofHigh',
+                          'TotalNumberofHighDays', 'TotalNumberofPeakDays', 'LengthofMenses',
+                          'TotalMensesScore', 'Age', 'Height', 'Weight', 'Numberpreg',
+                          'Abortions', 'BMI', 'MensesScoreDayOne', 'MensesScoreDayTwo',
+                          'MensesScoreDayThree', 'MensesScoreDayFour', 'MensesScoreDayFive',
+                          'MensesScoreDaySix']
+        for field in numeric_fields:
+            input_df[field] = pd.to_numeric(input_df[field], errors='coerce')
+
+        # Predict
+        prediction = model.predict(input_df)[0]
+        
+        # Define and render the result page template with the prediction result
+        result_template = """
+        <html>
+            <head>
+                <title>Prediction Result</title>
+            </head>
+            <body>
+                <h1>Prediction Result</h1>
+                <p>The predicted result is: {{ prediction }}</p>
+            </body>
+        </html>
+        """
+        return render_template_string(result_template, prediction=prediction)
+
+        # return result_template
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+# @app.route('/predict', methods=["POST"])
+# def ovulation_prediction():
+#     # Extract and process form data to get a prediction
+#     input_data = {field: request.form[field] for field in request.form}
+#     input_df = pd.DataFrame([input_data])
+
+#     # Convert numeric fields to float
+#     numeric_fields = ['LengthofCycle', 'LengthofLutealPhase', 'FirstDayofHigh',
+#                       'TotalNumberofHighDays', 'TotalNumberofPeakDays', 'LengthofMenses',
+#                       'TotalMensesScore', 'Age', 'Height', 'Weight', 'Numberpreg',
+#                       'Abortions', 'BMI', 'MensesScoreDayOne', 'MensesScoreDayTwo',
+#                       'MensesScoreDayThree', 'MensesScoreDayFour', 'MensesScoreDayFive',
+#                       'MensesScoreDaySix']
+#     for field in numeric_fields:
+#         input_df[field] = pd.to_numeric(input_df[field], errors='coerce')
+    
+#     results = return_prediction(model, input_df)
+    
+#     # Define and render the result page template with the prediction result
+#     result_template = """
+#     <html>
+#         <head>
+#             <title>Prediction Result</title>
+#         </head>
+#         <body>
+#             <h1>Prediction Result</h1>
+#             <p>The predicted result is: {{ prediction }}</p>
+#         </body>
+#     </html>
+#     """
+#     return render_template_string(result_template, prediction=results)
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
 # @app.route("/")
 # def index():
 #     # Creating a string that holds HTML form with input boxes for each field
@@ -128,30 +213,30 @@ def index():
     
 #     return form_html
 
-@app.route('/predict', methods=["POST"])
-def ovulation_prediction():
-    # Extract form data
-    input_data = {field: request.form[field] for field in request.form}
-    input_df = pd.DataFrame([input_data])
+# @app.route('/predict', methods=["POST"])
+# def ovulation_prediction():
+#     # Extract form data
+#     input_data = {field: request.form[field] for field in request.form}
+#     input_df = pd.DataFrame([input_data])
     
-    # Convert numeric fields to float
-    numeric_fields = ['LengthofCycle', 'LengthofLutealPhase', 'FirstDayofHigh',
-                      'TotalNumberofHighDays', 'TotalNumberofPeakDays', 'LengthofMenses',
-                      'TotalMensesScore', 'Age', 'Height', 'Weight', 'Numberpreg',
-                      'Abortions', 'BMI', 'MensesScoreDayOne', 'MensesScoreDayTwo',
-                      'MensesScoreDayThree', 'MensesScoreDayFour', 'MensesScoreDayFive',
-                      'MensesScoreDaySix']
-    for field in numeric_fields:
-        input_df[field] = pd.to_numeric(input_df[field], errors='coerce')
+#     # Convert numeric fields to float
+#     numeric_fields = ['LengthofCycle', 'LengthofLutealPhase', 'FirstDayofHigh',
+#                       'TotalNumberofHighDays', 'TotalNumberofPeakDays', 'LengthofMenses',
+#                       'TotalMensesScore', 'Age', 'Height', 'Weight', 'Numberpreg',
+#                       'Abortions', 'BMI', 'MensesScoreDayOne', 'MensesScoreDayTwo',
+#                       'MensesScoreDayThree', 'MensesScoreDayFour', 'MensesScoreDayFive',
+#                       'MensesScoreDaySix']
+#     for field in numeric_fields:
+#         input_df[field] = pd.to_numeric(input_df[field], errors='coerce')
     
-    # Get the prediction
-    results = return_prediction(model, input_df)
+#     # Get the prediction
+#     results = return_prediction(model, input_df)
     
-    # Return the prediction result
-    return jsonify(prediction=results)
+#     # Return the prediction result
+#     return jsonify(prediction=results)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
 
 
 # from flask import Flask, request, jsonify
