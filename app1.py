@@ -72,7 +72,7 @@ def index():
         * Predictor *<br>
         * * * * * *
     </div>
-    <h1>Welcome to our ovulation prediction service</h1>
+    <h1>Welcome to our ovulation prediction service! Enter your details below.</h1>
     <form action="/predict" method="post">
     """
     
