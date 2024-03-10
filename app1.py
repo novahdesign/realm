@@ -1,8 +1,16 @@
-from flask import Flask
+from flask import Flask, render_template
+from passageidentity import Passage, PassageError
 
 from flask import Flask, request, jsonify, render_template_string
 import pandas as pd
 import joblib
+
+import os
+
+PASSAGE_APP_ID = os.environ.get("PASSAGE_APP_ID")
+PASSAGE_API_KEY = os.environ.get("PASSAGE_API_KEY")
+
+
 
 
 
@@ -23,11 +31,17 @@ model = joblib.load('ovulationpredictor.joblib')
 
 # model = joblib.load('ovulationpredictor.joblib')
 
+
 @app.route("/")
 def index():
+    return render_template('index.html', psg_app_id=PASSAGE_APP_ID)
     # Adding internal CSS with improved aesthetics and a simple text-based logo
     form_html = """
     <html>
+    <div class="form-container">  
+    <passage-auth app-id="{{psg_app_id}}"></passage-auth>
+    <script src="https://cdn.passage.id/passage-web.js"></script> 
+    </div>
     <head>
         <title>Ovulation Prediction Service</title>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
