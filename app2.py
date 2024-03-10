@@ -183,14 +183,18 @@ def process_with_cohere():
     # Use Cohere's chat API to simulate a conversation
     response = co.chat(
         # chat_history=chat_history,
-        # message=f"Given I am on day {current_day_of_cycle} of my cycle, and the predicted ovulation day is {prediction}, what should I consider?",
+        # message=f"Given I am on day {current_day_of_cycle} of my cycle, and the predicted ovulation day is {prediction}, what should I consider in terms of nutrition, sleep and mental health?",
         # message=f"Please provide insights based on the prediction. This number is the day of ovulation from the beginning of my cycle. What should I do for my physical health? just tips, not real {prediction}.",
-        message=f"Given I am {days_until_ovulation} days away from the beginning of ovulation, what should I consider?",
+        message=f"Given I am {days_until_ovulation} days away from the beginning of ovulation, what should I consider in terms of nutrition, sleep and mental health??",
         connectors=[{"id": "web-search"}]
     )
     
-    generated_text = response
+    generated_text = response.text
     # citations = response.id.citations
+    citations = []
+    for citation in response.citations:
+        citations.append(citation['text'])
+
 
     # Constructing the response page
     response_template = """
