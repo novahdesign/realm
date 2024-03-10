@@ -114,7 +114,7 @@ def index():
     </head>
     <body>
     <div class="logo">
-    <img src="{url_for('static', filename='logo.gif')}" alt="Realm Logo" position="relative" width="80" height="80">
+    <img src="emoji.gif" alt="Realm Logo" position="relative" width="80">
     <br>
         Realm <3
     <br>
