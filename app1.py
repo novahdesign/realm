@@ -1,10 +1,9 @@
 from flask import Flask
 
-from flask import Flask, request, jsonify, render_template_string
+import cohere
+from flask import Flask, request, render_template_string, redirect, url_for
 import pandas as pd
 import joblib
-
-
 
 app = Flask(__name__)
 
@@ -14,6 +13,10 @@ def return_prediction(model, input_df):
     return prediction
 
 model = joblib.load('ovulationpredictor.joblib')
+
+# Assume you have your Cohere API key stored in an environment variable or securely
+cohere_api_key = '6Fdzo9FxYHFeQD8emNGOQRv292P5mAoMm8dy8Hyq'
+co = cohere.Client(cohere_api_key)
 
 # app = Flask(__name__)
 
@@ -130,24 +133,106 @@ def ovulation_prediction():
         # Predict
         prediction = model.predict(input_df)[0]
         
-        # Define and render the result page template with the prediction result
-        result_template = """
-        <html>
-            <head>
-                <title>Prediction Result</title>
-            </head>
-            <body>
-                <h1>Prediction Result</h1>
-                <p>The predicted result is: {{ prediction }}</p>
-            </body>
-        </html>
-        """
-        return render_template_string(result_template, prediction=prediction)
+    result_template = """
+    <html>
+        <head>
+            <title>Prediction Result</title>
+        </head>
+        <body>
+            <h1>Prediction Result</h1>
+            <p>The predicted result is: {{ prediction }}</p>
+            <!-- Add a form to post the prediction to the /cohere_process route -->
+            <form action="/cohere_process" method="post">
+                <input type="hidden" name="prediction" value="{{ prediction }}">
+                <input type="submit" value="Process with Cohere">
+            </form>
+        </body>
+    </html>
+    """
+    return render_template_string(result_template, prediction=prediction)
 
-        # return result_template
+@app.route('/cohere_process', methods=["POST"])
+def process_with_cohere():
+    co = cohere.Client('6Fdzo9FxYHFeQD8emNGOQRv292P5mAoMm8dy8Hyq')
+
+    prediction = request.form.get('prediction')
+    
+    # Define a conversation history, assuming the context and the user's question
+    # Adjust this according to your application's context and requirements
+    chat_history = [
+        {"role": "SYSTEM", "message": f"The day of ovulation from beginning of cycle prediction result is {prediction}."},
+        {"role": "USER", "message": "Based on this prediction, what advice can you give?"}
+    ]
+
+    # Use Cohere's chat API to simulate a conversation
+    response = co.chat(
+        chat_history=chat_history,
+        message=f"Please provide insights based on the prediction {prediction}.",
+    )
+    
+    generated_text = response
+    
+    # Return a response page with the generated content
+    response_template = """
+    <html>
+        <head><title>Cohere Response</title></head>
+        <body>
+            <h1>Response from Cohere</h1>
+            <p>Generated text: {{ generated_text }}</p>
+        </body>
+    </html>
+    """
+    return render_template_string(response_template, generated_text=generated_text)
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+# @app.route('/cohere_process', methods=["POST"])
+# def process_with_cohere():
+#     prediction = request.form.get('prediction')
+    
+#     # Use Cohere's API to process the prediction
+#     response = co.generate(
+#         prompt=f'Based on the prediction {prediction}, what insights can be derived?',
+#         model='llm=cohere_chat_model',
+#         max_tokens=50
+#     )
+    
+#     generated_text = response.generations[0].text
+    
+#     # Return a response page with the generated content
+#     response_template = """
+#     <html>
+#         <head><title>Cohere Response</title></head>
+#         <body>
+#             <h1>Response from Cohere</h1>
+#             <p>Generated text: {{ generated_text }}</p>
+#         </body>
+#     </html>
+#     """
+#     return render_template_string(response_template, generated_text=generated_text)
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
+# @app.route('/cohere_process', methods=["POST"])
+# def process_with_cohere():
+#     prediction = request.form.get('prediction')
+#     # Here, you would add your specific interaction with the Cohere API
+#     # For example, generating text based on the prediction
+#     response = co.generate(prompt=f'Based on the prediction {prediction}, as date of ovulation, what should i do', model='large', max_tokens=50)
+#     # generated_text = response.generations[0].text
+
+#     # For now, just return a simple confirmation page
+#     # return f'Processed prediction: {prediction} with Cohere.'
+#     return f'Processed prediction: {response} with Cohere. with {predition}'
+
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
+
+
 
 # @app.route('/predict', methods=["POST"])
 # def ovulation_prediction():
