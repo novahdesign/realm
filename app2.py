@@ -27,17 +27,11 @@ PASSAGE_APP_ID= 'v2jbtAXbi7gF6tIDH0oMvBw0'
 
 # model = joblib.load('ovulationpredictor.joblib')
 
-
 @app.route("/")
 def index():
-    # return render_template('index.html', psg_app_id=PASSAGE_APP_ID)
     # Adding internal CSS with improved aesthetics and a simple text-based logo
-    # return render_template('index.html', psg_app_id=PASSAGE_APP_ID)
-
     form_html = """
     <html>
-    <div class="form-container">  
-    </div>
     <head>
         <title>Ovulation Prediction Service</title>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
@@ -92,7 +86,7 @@ def index():
         * Predictor *<br>
         * * * * * *
     </div>
-    <h1>Welcome to our ovulation prediction service! Enter your details below.</h1>
+    <h1>Welcome to our ovulation prediction service</h1>
     <form action="/predict" method="post">
     """
     
@@ -118,6 +112,98 @@ def index():
     """
     
     return form_html
+
+
+# @app.route("/")
+# def index():
+#     # return render_template('index.html', psg_app_id=PASSAGE_APP_ID)
+#     # Adding internal CSS with improved aesthetics and a simple text-based logo
+#     # return render_template('index.html', psg_app_id=PASSAGE_APP_ID)
+
+#     form_html = """
+#     <html>
+#     <div class="form-container">  
+#     </div>
+#     <head>
+#         <title>Ovulation Prediction Service</title>
+#         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+#         <style>
+#             body {
+#                 font-family: 'Roboto', sans-serif;
+#                 background-color: #f4f4f4;
+#                 margin: 0 auto;
+#                 padding: 20px;
+#                 max-width: 600px;
+#             }
+#             h1 {
+#                 color: #333;
+#                 text-align: center;
+#             }
+#             .logo {
+#                 text-align: center;
+#                 font-size: 24px;
+#                 line-height: 1.5;
+#                 color: #4CAF50;
+#             }
+#             label {
+#                 margin-top: 20px;
+#                 margin-bottom: 5px;
+#                 font-weight: 500;
+#             }
+#             input[type="text"], input[type="submit"] {
+#                 width: 100%;
+#                 padding: 10px;
+#                 margin-bottom: 10px;
+#                 border-radius: 5px;
+#                 border: 1px solid #ccc;
+#                 box-sizing: border-box;
+#             }
+#             input[type="submit"] {
+#                 background-color: #4CAF50;
+#                 color: white;
+#                 font-weight: 500;
+#                 border: none;
+#                 cursor: pointer;
+#                 transition: background 0.3s ease;
+#             }
+#             input[type="submit"]:hover {
+#                 background-color: #45a049;
+#             }
+#         </style>
+#     </head>
+#     <body>
+#     <div class="logo">
+#         * * * * * *<br>
+#         * Ovulation *<br>
+#         * Predictor *<br>
+#         * * * * * *
+#     </div>
+#     <h1>Welcome to our ovulation prediction service! Enter your details below.</h1>
+#     <form action="/predict" method="post">
+#     """
+    
+#     # List of all the fields
+#     fields = ['LengthofCycle', 'LengthofLutealPhase', 'FirstDayofHigh',
+#               'TotalNumberofHighDays', 'TotalNumberofPeakDays', 'LengthofMenses',
+#               'TotalMensesScore', 'Age', 'Height', 'Weight', 'Numberpreg',
+#               'Abortions', 'BMI', 'MensesScoreDayOne', 'MensesScoreDayTwo',
+#               'MensesScoreDayThree', 'MensesScoreDayFour', 'MensesScoreDayFive',
+#               'MensesScoreDaySix']
+    
+#     # For each field, add an input box to the form
+#     for field in fields:
+#         form_html += f'<label for="{field}">{field}:</label>'
+#         form_html += f'<input type="text" id="{field}" name="{field}">'
+
+#     # Close the form with a submit button and the rest of the HTML
+#     form_html += """
+#     <input type="submit" value="Predict">
+#     </form>
+#     </body>
+#     </html>
+#     """
+    
+#     return form_html
 
 @app.route('/predict', methods=["POST"])
 def ovulation_prediction():
@@ -185,7 +271,7 @@ def process_with_cohere():
         # chat_history=chat_history,
         # message=f"Given I am on day {current_day_of_cycle} of my cycle, and the predicted ovulation day is {prediction}, what should I consider in terms of nutrition, sleep and mental health?",
         # message=f"Please provide insights based on the prediction. This number is the day of ovulation from the beginning of my cycle. What should I do for my physical health? just tips, not real {prediction}.",
-        message=f"Given I am {days_until_ovulation} days away from the beginning of ovulation, what should I consider in terms of nutrition, sleep and mental health??",
+        message=f"Given I am {days_until_ovulation} days away from the beginning of ovulation, what should I consider in terms of nutrition, sleep and mental health separately??.",
         connectors=[{"id": "web-search"}]
     )
     
