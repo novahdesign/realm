@@ -1,10 +1,12 @@
 from flask import Flask, render_template
-# from passageidentity import Passage, PassageError
-
+from passageidentity import Passage, PassageError
 import cohere
-from flask import Flask, request, render_template_string, redirect, url_for
+from flask import Flask, request, jsonify, render_template_string
 import pandas as pd
 import joblib
+from main import auth
+
+import os
 
 app = Flask(__name__)
 
@@ -19,17 +21,39 @@ model = joblib.load('ovulationpredictor.joblib')
 cohere_api_key = '6Fdzo9FxYHFeQD8emNGOQRv292P5mAoMm8dy8Hyq'
 co = cohere.Client(cohere_api_key)
 PASSAGE_APP_ID= 'v2jbtAXbi7gF6tIDH0oMvBw0'
-# app = Flask(__name__)
+PASSAGE_API_KEY='jndJqbt0NE.cnF50aSCBepyMNbOqhog01bgXOaH5EhuEIcyaK5jR0hwonWVIFJiyPCEuM2Hk9Yw'
+try:
+    psg = Passage(PASSAGE_APP_ID, PASSAGE_API_KEY)
+except PassageError as e:
+    print(e)
+    exit()
 
-# def return_prediction(model, input_df):
-#     prediction = model.predict(input_df)[0]
-#     return prediction
+# decorator that will run before every route in the auth blueprint
+@auth.before_request
+def before_request():
+    try:
+        g.user = psg.authenticateRequest(request)
+    except PassageError as e:
+        # this is an issue with the auth check, return 401
+        return render_template('unauthorized.html')
 
-# model = joblib.load('ovulationpredictor.joblib')
+
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
+    # g.user will be set here. 
+	  # use Passage to get the user information and add it to the dashboard
+    psg_user = psg.getUser(g.user)
+
+    return render_template('dashboard.html', email=psg_user.email)
+
 
 @app.route("/")
 def index():
+    return render_template('index.html', psg_app_id=PASSAGE_APP_ID)
     # Adding internal CSS with improved aesthetics and a simple text-based logo
+
+@app.route("/home")
+def home():
     form_html = """
     <html>
     <head>
@@ -113,97 +137,6 @@ def index():
     
     return form_html
 
-
-# @app.route("/")
-# def index():
-#     # return render_template('index.html', psg_app_id=PASSAGE_APP_ID)
-#     # Adding internal CSS with improved aesthetics and a simple text-based logo
-#     # return render_template('index.html', psg_app_id=PASSAGE_APP_ID)
-
-#     form_html = """
-#     <html>
-#     <div class="form-container">  
-#     </div>
-#     <head>
-#         <title>Ovulation Prediction Service</title>
-#         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-#         <style>
-#             body {
-#                 font-family: 'Roboto', sans-serif;
-#                 background-color: #f4f4f4;
-#                 margin: 0 auto;
-#                 padding: 20px;
-#                 max-width: 600px;
-#             }
-#             h1 {
-#                 color: #333;
-#                 text-align: center;
-#             }
-#             .logo {
-#                 text-align: center;
-#                 font-size: 24px;
-#                 line-height: 1.5;
-#                 color: #4CAF50;
-#             }
-#             label {
-#                 margin-top: 20px;
-#                 margin-bottom: 5px;
-#                 font-weight: 500;
-#             }
-#             input[type="text"], input[type="submit"] {
-#                 width: 100%;
-#                 padding: 10px;
-#                 margin-bottom: 10px;
-#                 border-radius: 5px;
-#                 border: 1px solid #ccc;
-#                 box-sizing: border-box;
-#             }
-#             input[type="submit"] {
-#                 background-color: #4CAF50;
-#                 color: white;
-#                 font-weight: 500;
-#                 border: none;
-#                 cursor: pointer;
-#                 transition: background 0.3s ease;
-#             }
-#             input[type="submit"]:hover {
-#                 background-color: #45a049;
-#             }
-#         </style>
-#     </head>
-#     <body>
-#     <div class="logo">
-#         * * * * * *<br>
-#         * Ovulation *<br>
-#         * Predictor *<br>
-#         * * * * * *
-#     </div>
-#     <h1>Welcome to our ovulation prediction service! Enter your details below.</h1>
-#     <form action="/predict" method="post">
-#     """
-    
-#     # List of all the fields
-#     fields = ['LengthofCycle', 'LengthofLutealPhase', 'FirstDayofHigh',
-#               'TotalNumberofHighDays', 'TotalNumberofPeakDays', 'LengthofMenses',
-#               'TotalMensesScore', 'Age', 'Height', 'Weight', 'Numberpreg',
-#               'Abortions', 'BMI', 'MensesScoreDayOne', 'MensesScoreDayTwo',
-#               'MensesScoreDayThree', 'MensesScoreDayFour', 'MensesScoreDayFive',
-#               'MensesScoreDaySix']
-    
-#     # For each field, add an input box to the form
-#     for field in fields:
-#         form_html += f'<label for="{field}">{field}:</label>'
-#         form_html += f'<input type="text" id="{field}" name="{field}">'
-
-#     # Close the form with a submit button and the rest of the HTML
-#     form_html += """
-#     <input type="submit" value="Predict">
-#     </form>
-#     </body>
-#     </html>
-#     """
-    
-#     return form_html
 
 @app.route('/predict', methods=["POST"])
 def ovulation_prediction():
@@ -869,6 +802,3 @@ if __name__ == '__main__':
 
 # # app = Flask(__name__)
 
-# # @app.route('/')
-# # def hello_world():
-# #     return 'Hello, World!'
