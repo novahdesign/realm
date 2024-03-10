@@ -305,7 +305,7 @@ def process_with_cohere():
         # chat_history=chat_history,
         # message=f"Given I am on day {current_day_of_cycle} of my cycle, and the predicted ovulation day is {prediction}, what should I consider in terms of nutrition, sleep and mental health?",
         # message=f"Please provide insights based on the prediction. This number is the day of ovulation from the beginning of my cycle. What should I do for my physical health? just tips, not real {prediction}.",
-        message=f"Given I am {days_until_ovulation} days away from the beginning of ovulation, what should I consider in terms of nutrition, sleep and mental health separately??. cite sources, and give me bullet points",
+        message=f"Given I am {days_until_ovulation} days away from the beginning of ovulation, what should I consider in terms of nutrition, sleep and mental health separately based on where I am in my cycle??. use academic sources, and give me bullet points",
         connectors=[{"id": "web-search"}]
     )
     
