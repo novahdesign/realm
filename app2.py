@@ -191,8 +191,8 @@ def process_with_cohere():
     
     generated_text = response
 
-    cohere_text = response.text if response.generations else "No response generated."
-    citations = response.citations if response.generations else []
+    cohere_text = response.message 
+    citations = response.citations
 
 
     # Constructing the response page
@@ -203,8 +203,6 @@ def process_with_cohere():
             <h1>Response from Cohere</h1>
             <p><strong>Cohere Message Text:</strong> {{ cohere_text }}</p>
             <p><strong>Cohere Citations:</strong> {{ citations }}</p>
-
-
             <p><strong>All Generated Text:</strong> {{ generated_text }}</p>
         </body>
     </html>
