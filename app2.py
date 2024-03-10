@@ -114,8 +114,10 @@ def index():
     </head>
     <body>
     <div class="logo">
-    <img src="/fortune.gif" alt="Realm Logo">
+    <img src="{url_for('static', filename='logo.gif')}" alt="Realm Logo" position="relative" width="80" height="80">
+    <br>
         Realm <3
+    <br>
     </div>
     <h1>Welcome to Realm, your AI-powered reproductive wellness app! Enter your prediction details below.</h1>
     <form action="/predict" method="post">
