@@ -59,18 +59,33 @@ def index():
             }
 
             .logo {
-                color: #480CAB;
+                color: #B8C4FE;
                 font-size: 1.5em;
                 animation: glow 5s ease-in-out infinite alternate;
             }
 
+            .glow-logo {{
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                filter: blur(8px);
+                z-index: 0;
+                animation: glow-animation 5s infinite alternate;
+            }}
+
+            @keyframes glow-animation {{
+                0% {{ opacity: 0.6; }}
+                100% {{ opacity: 1; }}
+            }}
+
             @keyframes glow {
                 from {
-                    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #21D4FD, 0 0 30px #21D4FD, 0 0 40px #21D4FD;
+                    text-shadow: 0 0 50px #fff, 0 0 100px #fff, 0 0 70px #21D4FD, 0 0 30px #21D4FD, 0 0 40px #21D4FD;
                 }
                 
                 to {
-                    text-shadow: 0 0 20px #fff, 0 0 30px #FF1177, 0 0 40px #FF1177, 0 0 50px #FF1177, 0 0 60px #FF1177;
+                    text-shadow: 0 0 200px #fff, 0 0 80px #FF1177, 0 0 50px #FF1177, 0 0 50px #FF1177, 0 0 60px #FF1177;
                 }
             }
 
