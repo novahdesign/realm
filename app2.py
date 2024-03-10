@@ -319,17 +319,61 @@ def process_with_cohere():
     # Constructing the response page
     response_template = """
     <html>
-        <head><title>Cohere Response</title></head>
+        <head>
+            <title>Cohere Response</title>
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+            <style>
+                body {
+                    font-family: 'Poppins', sans-serif;
+                    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+                    color: #fff;
+                    margin: 0;
+                    padding: 20px;
+                    max-width: 800px;
+                    margin: auto;
+                    text-align: center;
+                }
+
+                h1 {
+                    font-weight: 600;
+                    margin: 0.5em 0;
+                    color: #B8C4FE;
+                }
+
+                p {
+                    margin: 10px 0;
+                    padding: 20px;
+                    background: rgba(0, 0, 0, 0.8);
+                    border-radius: 15px;
+                    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+                }
+
+                strong {
+                    color: #21D4FD;
+                }
+            </style>
+        </head>
         <body>
-            <h1>Response from Cohere</h1>
-            <p><strong>Given days until ovulation: {{ days_until_ovulation }}:</strong> </p>
-            <p><strong>Cohere Citations:</strong> {{ citations }}</p>
-            <p><strong>All Generated Text:</strong> {{ generated_text }}</p>
+        <div class="logo">
+        <img src="static/emoji.gif" alt="Realm Logo" position="relative" width="50">
+        <br>
+        Realm <3
+        <br> 
+        </div>
+            <h1>Realm - Response from Cohere</h1>
+            <div>
+                <p><strong>Days until ovulation: </strong>{{ days_until_ovulation }}</p>
+            </div>
+            <div>
+                <p><strong>Advice based on the prediction:</strong> {{ generated_text }}</p>
+            </div>
+            <div>
+                <p><strong>Citations:</strong> {{ citations | join(", ") }}</p>
+            </div>
         </body>
     </html>
     """
-    return render_template_string(response_template, generated_text=generated_text)
-
+    return render_template_string(response_template, days_until_ovulation=days_until_ovulation, generated_text=generated_text, citations=citations)
 if __name__ == '__main__':
     app.run(debug=True)
 
