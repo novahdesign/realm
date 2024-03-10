@@ -172,32 +172,40 @@ def process_with_cohere():
     current_day_of_cycle = request.form.get('current_day_of_cycle')
 
     days_until_ovulation = float(prediction) - float(current_day_of_cycle)
+
     # Define a conversation history, assuming the context and the user's question
     # Adjust this according to your application's context and requirements
-    chat_history = [
-        {"role": "SYSTEM", "message": f"The day of ovulation from beginning of cycle prediction result is {prediction}."},
-        {"role": "USER", "message": "Based on this prediction, what advice can you give?"}
-    ]
+    # chat_history = [
+    #     {"role": "SYSTEM", "message": f"The day of ovulation from beginning of cycle prediction result is {prediction}."},
+    #     {"role": "USER", "message": "Based on this prediction, what advice can you give?"}
+    # ]
 
     # Use Cohere's chat API to simulate a conversation
     response = co.chat(
         # chat_history=chat_history,
         # message=f"Given I am on day {current_day_of_cycle} of my cycle, and the predicted ovulation day is {prediction}, what should I consider?",
-        message=f"Given I am {days_until_ovulation} days away from the beginning of ovulation, what should I consider?",
-
         # message=f"Please provide insights based on the prediction. This number is the day of ovulation from the beginning of my cycle. What should I do for my physical health? just tips, not real {prediction}.",
+        message=f"Given I am {days_until_ovulation} days away from the beginning of ovulation, what should I consider?",
         connectors=[{"id": "web-search"}]
     )
     
     generated_text = response
-    
-    # Return a response page with the generated content
+
+    cohere_text = response.text if response.generations else "No response generated."
+    citations = response.citations if response.generations else []
+
+
+    # Constructing the response page
     response_template = """
     <html>
         <head><title>Cohere Response</title></head>
         <body>
             <h1>Response from Cohere</h1>
-            <p>Generated text: {{ generated_text }}</p>
+            <p><strong>Cohere Message Text:</strong> {{ cohere_text }}</p>
+            <p><strong>Cohere Citations:</strong> {{ citations }}</p>
+
+
+            <p><strong>All Generated Text:</strong> {{ generated_text }}</p>
         </body>
     </html>
     """
