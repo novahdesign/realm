@@ -315,6 +315,11 @@ def process_with_cohere():
     for citation in response.citations:
         citations.append(citation['text'])
 
+    if response and response.citations:
+        citations_text = response.citations
+    else:
+        citations_text = "No citations available"
+
 
     # Constructing the response page
     response_template = """
@@ -369,11 +374,19 @@ def process_with_cohere():
             </div>
             <div>
                 <p><strong>TLDR:</strong> {{ citations | join(", ") }}</p>
+                
             </div>
+
+             <div>
+                <p><strong>Cohere citations:</strong> {{ citations_text }}</p>
+            </div>
+
+
         </body>
     </html>
     """
-    return render_template_string(response_template, days_until_ovulation=days_until_ovulation, generated_text=generated_text, citations=citations)
+    return render_template_string(response_template, days_until_ovulation=days_until_ovulation, generated_text=generated_text, citations=citations, citations_text=citations_text)
+
 if __name__ == '__main__':
     app.run(debug=True)
 
