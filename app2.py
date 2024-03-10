@@ -59,7 +59,7 @@ def index():
             }
 
             .logo {
-                color: #21D4FD;
+                color: #480CAB;
                 font-size: 1.5em;
                 animation: glow 5s ease-in-out infinite alternate;
             }
@@ -114,7 +114,7 @@ def index():
     </head>
     <body>
     <div class="logo">
-    <img src="emoji.gif" alt="Realm Logo" position="relative" width="80">
+    <img src="static/emoji.gif" alt="Realm Logo" position="relative" width="50">
     <br>
         Realm <3
     <br>
