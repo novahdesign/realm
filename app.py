@@ -4,6 +4,14 @@ from flask import Flask, request, jsonify
 import pandas as pd
 import joblib
 
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
+
+# import os
+# import passageidentity import Passage, PassageError
+
+# auth = Blueprint('auth', __name__)
+
 app = Flask(__name__)
 
 def return_prediction(model, input_df):
