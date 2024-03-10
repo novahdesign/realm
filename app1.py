@@ -1,23 +1,11 @@
 from flask import Flask, render_template
-from passageidentity import Passage, PassageError
+# from passageidentity import Passage, PassageError
 
 import cohere
 from flask import Flask, request, render_template_string, redirect, url_for
 import pandas as pd
 import joblib
 
-<<<<<<< HEAD
-=======
-import os
-
-PASSAGE_APP_ID = os.environ.get("PASSAGE_APP_ID")
-PASSAGE_API_KEY = os.environ.get("PASSAGE_API_KEY")
-
-
-
-
-
->>>>>>> 154e90b463c78f7f8f86d07dc94dfa041580727d
 app = Flask(__name__)
 
 def return_prediction(model, input_df):
@@ -47,8 +35,6 @@ def index():
     form_html = """
     <html>
     <div class="form-container">  
-    <passage-auth app-id="{{psg_app_id}}"></passage-auth>
-    <script src="https://cdn.passage.id/passage-web.js"></script> 
     </div>
     <head>
         <title>Ovulation Prediction Service</title>
@@ -186,7 +172,8 @@ def process_with_cohere():
     # Use Cohere's chat API to simulate a conversation
     response = co.chat(
         chat_history=chat_history,
-        message=f"Please provide insights based on the prediction {prediction}.",
+        message=f"Please provide insights based on the prediction. This number is the day of ovulation from the beginning of my cycle. What should I do for my physical health? just tips, not real {prediction}.",
+        connectors=[{"id": "web-search"}]
     )
     
     generated_text = response
