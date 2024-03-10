@@ -147,12 +147,12 @@ def home():
     </head>
     <body>
     <div class="logo">
-        * * * * * *<br>
-        * Ovulation *<br>
-        * Predictor *<br>
-        * * * * * *
+    <img src="static/emoji.gif" alt="Realm Logo" position="relative" width="50">
+    <br>
+        Realm <3
+    <br>
     </div>
-    <h1>Welcome to our ovulation prediction service</h1>
+    <h1>Welcome to Realm, your AI-powered reproductive wellness app! Enter your prediction details below.</h1>
     <form action="/predict" method="post">
     """
     
@@ -203,28 +203,87 @@ def ovulation_prediction():
         
     result_template = """
     <html>
-        <head>
-            <title>Prediction Result</title>
-        </head>
-        <body>
-            <h1>Prediction Result</h1>
-            <p>The predicted result is: {{ prediction }}</p>
+    <head>
+        <title>Realm - Prediction Result</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+        <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+                color: #fff;
+                margin: 0;
+                padding: 20px;
+                max-width: 800px;
+                margin: auto;
+                text-align: center;
+            }
 
-            <h1>Enter current day of cycle</h1>
+            h1, .logo {
+                font-weight: 600;
+                margin: 0.5em 0;
+            }
 
-            <!-- Add a form to post the prediction to the /cohere_process route -->
+            form {
+                background: rgba(0, 0, 0, 0.8);
+                padding: 20px;
+                border-radius: 15px;
+                box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+                border: 1px solid #2c2c2c;
+            }
 
-            <form action="/cohere_process" method="post">
-                    <input type="hidden" name="prediction" value="{{ prediction }}">
-                    <label for="currentDay">Current Day of Cycle:</label>
-                    <input type="number" id="currentDay" name="current_day_of_cycle" min="1" required>
-                    <input type="submit" value="Process with Cohere">
-            </form>
+            input[type="number"], input[type="submit"] {
+                width: calc(100% - 22px);
+                padding: 10px;
+                margin: 10px 0;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                background: #000;
+                color: #fff;
+                box-sizing: border-box;
+                font-family: 'Poppins', sans-serif;
+            }
 
-        </body>
+            input[type="submit"] {
+                background-color: #21D4FD;
+                color: #000;
+                transition: background-color 0.3s;
+            }
+
+            input[type="submit"]:hover {
+                background-color: #2196F3;
+            }
+
+            label {
+                text-align: left;
+                display: block;
+                margin: 15px 0 5px;
+                font-family: 'Poppins', sans-serif;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="logo">
+        <img src="static/emoji.gif" alt="Realm Logo" position="relative" width="50">
+        <br>
+        Realm <3
+        <br>
+            
+        </div>
+        <h1>Realm - Prediction Result</h1>
+        <p>The predicted result is: {{ prediction }}</p>
+        <h1>Enter current day of cycle</h1>
+
+        <form action="/cohere_process" method="post">
+            <input type="hidden" name="prediction" value="{{ prediction }}">
+            <label for="currentDay">Current Day of Cycle:</label>
+            <input type="number" id="currentDay" name="current_day_of_cycle" min="1" required>
+            <input type="submit" value="Process with Cohere">
+        </form>
+    </body>
     </html>
     """
     return render_template_string(result_template, prediction=prediction)
+    
 
 @app.route('/cohere_process', methods=["POST"])
 def process_with_cohere():
