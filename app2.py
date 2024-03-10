@@ -38,50 +38,77 @@ def index():
     <html>
     <div class="form-container">  
     </div>
-    <head>
-        <title>Ovulation Prediction Service</title>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+      <head>
+        <title>Realm</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
         <style>
             body {
-                font-family: 'Roboto', sans-serif;
-                background-color: #f4f4f4;
-                margin: 0 auto;
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+                color: #fff;
+                margin: 0;
                 padding: 20px;
-                max-width: 600px;
-            }
-            h1 {
-                color: #333;
+                max-width: 800px;
+                margin: auto;
                 text-align: center;
             }
+
+            h1, .logo {
+                font-weight: 600;
+                margin: 0.5em 0;
+            }
+
             .logo {
-                text-align: center;
-                font-size: 24px;
-                line-height: 1.5;
-                color: #4CAF50;
+                color: #21D4FD;
+                font-size: 1.5em;
+                animation: glow 2s ease-in-out infinite alternate;
             }
-            label {
-                margin-top: 20px;
-                margin-bottom: 5px;
-                font-weight: 500;
+
+            @keyframes glow {
+                from {
+                    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #21D4FD, 0 0 30px #21D4FD, 0 0 40px #21D4FD;
+                }
+                
+                to {
+                    text-shadow: 0 0 20px #fff, 0 0 30px #FF1177, 0 0 40px #FF1177, 0 0 50px #FF1177, 0 0 60px #FF1177;
+                }
             }
+
+            form {
+                background: rgba(0, 0, 0, 0.8);
+                padding: 20px;
+                border-radius: 15px;
+                box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+                border: 1px solid #2c2c2c;
+            }
+
             input[type="text"], input[type="submit"] {
-                width: 100%;
+                width: calc(100% - 22px);
                 padding: 10px;
-                margin-bottom: 10px;
+                margin: 10px 0;
                 border-radius: 5px;
                 border: 1px solid #ccc;
+                background: #000;
+                color: #fff;
                 box-sizing: border-box;
+                font-family: 'Poppins', sans-serif;
             }
+
             input[type="submit"] {
-                background-color: #4CAF50;
-                color: white;
-                font-weight: 500;
-                border: none;
-                cursor: pointer;
-                transition: background 0.3s ease;
+                background-color: #21D4FD;
+                color: #000;
+                transition: background-color 0.3s;
             }
+
             input[type="submit"]:hover {
-                background-color: #45a049;
+                background-color: #2196F3;
+            }
+
+            label {
+                text-align: left;
+                display: block;
+                margin: 15px 0 5px;
+                font-family: 'Poppins', sans-serif;
             }
         </style>
     </head>
@@ -92,7 +119,7 @@ def index():
         * Predictor *<br>
         * * * * * *
     </div>
-    <h1>Welcome to our ovulation prediction service! Enter your details below.</h1>
+    <h1>Welcome to Realm, your AI-powered reproductive wellness app! Enter your details below.</h1>
     <form action="/predict" method="post">
     """
     
@@ -190,7 +217,7 @@ def process_with_cohere():
     )
     
     generated_text = response
-    # citations = response.id.citations
+    citations = response.text
 
     # Constructing the response page
     response_template = """
